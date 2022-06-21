@@ -122,7 +122,15 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="interupt2.c">
+    <Folder Include="FND" />
+    <Folder Include="Basic_IO" />
+    <Folder Include="LCD" />
+    <Folder Include="Interupt" />
+    <Folder Include="TimerAndCounter" />
+    <Folder Include="UART" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TimerAndCounter\TimerCount2.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

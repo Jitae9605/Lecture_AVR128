@@ -32,12 +32,18 @@ LIB_DEP:=
 LINKER_SCRIPT_DEP:=
 
 # Every subdirectory with source files must be described here
-SUBDIRS := 
+SUBDIRS :=  \
+../FND \
+../Basic_IO \
+../LCD \
+../Interupt \
+../TimerAndCounter \
+../UART
 
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../interupt2.c
+../TimerAndCounter/TimerCount2.c
 
 
 PREPROCESSING_SRCS += 
@@ -47,16 +53,16 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-interupt2.o
+TimerAndCounter/TimerCount2.o
 
 OBJS_AS_ARGS +=  \
-interupt2.o
+TimerAndCounter/TimerCount2.o
 
 C_DEPS +=  \
-interupt2.d
+TimerAndCounter/TimerCount2.d
 
 C_DEPS_AS_ARGS +=  \
-interupt2.d
+TimerAndCounter/TimerCount2.d
 
 OUTPUT_FILE_PATH +=GPIO.elf
 
@@ -72,7 +78,7 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
-./interupt2.o: .././interupt2.c
+TimerAndCounter/TimerCount2.o: ../TimerAndCounter/TimerCount2.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega128a -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega128a" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
