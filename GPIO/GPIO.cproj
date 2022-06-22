@@ -130,7 +130,7 @@
     <Folder Include="UART" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TimerAndCounter\TimerCount2.c">
+    <Compile Include="TimerAndCounter\TimerCount16bit4.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

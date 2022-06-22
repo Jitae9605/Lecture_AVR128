@@ -14,6 +14,7 @@ int main()
 {
 	DDRA = 0xff;
 	DDRB = 0xff;
+	DDRC = 0xff;
 	
 
 	while(1)
@@ -34,7 +35,7 @@ int main()
 		// 0  1  2  3  4  5  6  7  8  9   A    B   C   D   E   F
 		//                               10   11  12  13  14  15
 		
-		PORTA = 0xFF;
+		PORTC = 0xFF;
 		_delay_ms(1000);
 
 		int c = 0x01;
@@ -43,13 +44,13 @@ int main()
 			
 			int b = 0xFF;
 			b -= c;
-			PORTA = b;
+			PORTC = b;
 			_delay_ms(1000);
 			c *= 2;
 			
 		}
 
-		PORTA = 0xFF;
+		PORTC = 0xFF;
 		_delay_ms(1000);
 
 		int d = 0x80;
@@ -57,7 +58,7 @@ int main()
 		{
 			int b = 0xFF;
 			b -= d ;
-			PORTA = b;
+			PORTC = b;
 			_delay_ms(1000);
 			d /= 2;
 		}
