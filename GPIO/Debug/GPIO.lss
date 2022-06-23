@@ -3,29 +3,29 @@ GPIO.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  00000162  2**0
+  0 .data         00000000  00800100  00800100  000001c8  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000010e  00000000  00000000  00000054  2**1
+  1 .text         00000174  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  00000162  2**0
+  2 .comment      00000030  00000000  00000000  000001c8  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000194  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000001f8  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000020  00000000  00000000  000001d4  2**0
+  4 .debug_aranges 00000028  00000000  00000000  00000238  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000097b  00000000  00000000  000001f4  2**0
+  5 .debug_info   00000969  00000000  00000000  00000260  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000080d  00000000  00000000  00000b6f  2**0
+  6 .debug_abbrev 00000817  00000000  00000000  00000bc9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000318  00000000  00000000  0000137c  2**0
+  7 .debug_line   0000038a  00000000  00000000  000013e0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000024  00000000  00000000  00001694  2**2
+  8 .debug_frame  00000034  00000000  00000000  0000176c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000003f7  00000000  00000000  000016b8  2**0
+  9 .debug_str    000003f9  00000000  00000000  000017a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000137  00000000  00000000  00001aaf  2**0
+ 10 .debug_loc    0000012b  00000000  00000000  00001b99  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000010  00000000  00000000  00001be6  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  00001cc4  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -109,114 +109,198 @@ Disassembly of section .text:
   92:	d0 e1       	ldi	r29, 0x10	; 16
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
-  98:	02 d0       	rcall	.+4      	; 0x9e <main>
-  9a:	37 c0       	rjmp	.+110    	; 0x10a <_exit>
+  98:	61 d0       	rcall	.+194    	; 0x15c <main>
+  9a:	6a c0       	rjmp	.+212    	; 0x170 <_exit>
 
 0000009c <__bad_interrupt>:
   9c:	b1 cf       	rjmp	.-158    	; 0x0 <__vectors>
 
-0000009e <main>:
-	
-	
-	
-	 
-	 // MOTOR1_EN 를 출력 포트로 설정
-	DDRB = 0x20;
-  9e:	80 e2       	ldi	r24, 0x20	; 32
-  a0:	87 bb       	out	0x17, r24	; 23
-	
-	// STEP0 ~ STEP3을 출력 포트로 설정
-	DDRD = 0xf0;
-  a2:	80 ef       	ldi	r24, 0xF0	; 240
-  a4:	81 bb       	out	0x11, r24	; 17
-	
-	// M1 Disable, DC 모터 정지
-	PORTB &= ~0x20;
-  a6:	88 b3       	in	r24, 0x18	; 24
-  a8:	8f 7d       	andi	r24, 0xDF	; 223
-  aa:	88 bb       	out	0x18, r24	; 24
-	
-	while(1)
-	{
-		
-		for(i = 0; i< 12; i++)
-  ac:	80 e0       	ldi	r24, 0x00	; 0
-  ae:	21 c0       	rjmp	.+66     	; 0xf2 <main+0x54>
-		{
-			// 1 step
-			PORTD = 0x30;
-  b0:	90 e3       	ldi	r25, 0x30	; 48
-  b2:	92 bb       	out	0x12, r25	; 18
+0000009e <keyScan>:
+	return 0;
+}
+
+unsigned char keyScan()
+{
+	PORTA = 0xF7;							// 1111 0111  - 출력
+  9e:	87 ef       	ldi	r24, 0xF7	; 247
+  a0:	8b bb       	out	0x1b, r24	; 27
+	if(PINA == 0xFE) return '1';			// 1111 1110  - 입력받은 결과
+  a2:	89 b3       	in	r24, 0x19	; 25
+  a4:	8e 3f       	cpi	r24, 0xFE	; 254
+  a6:	09 f4       	brne	.+2      	; 0xaa <keyScan+0xc>
+  a8:	41 c0       	rjmp	.+130    	; 0x12c <keyScan+0x8e>
+	else if(PINA == 0xFD) return '2';		// 1111 1101  - 입력받은 결과
+  aa:	89 b3       	in	r24, 0x19	; 25
+  ac:	8d 3f       	cpi	r24, 0xFD	; 253
+  ae:	09 f4       	brne	.+2      	; 0xb2 <keyScan+0x14>
+  b0:	3f c0       	rjmp	.+126    	; 0x130 <keyScan+0x92>
+	else if(PINA == 0xFB) return '3';		// 1111 1011  - 입력받은 결과
+  b2:	89 b3       	in	r24, 0x19	; 25
+  b4:	8b 3f       	cpi	r24, 0xFB	; 251
+  b6:	f1 f1       	breq	.+124    	; 0x134 <keyScan+0x96>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  b4:	ef ef       	ldi	r30, 0xFF	; 255
-  b6:	f7 e4       	ldi	r31, 0x47	; 71
-  b8:	31 97       	sbiw	r30, 0x01	; 1
-  ba:	f1 f7       	brne	.-4      	; 0xb8 <main+0x1a>
-  bc:	00 c0       	rjmp	.+0      	; 0xbe <main+0x20>
-  be:	00 00       	nop
-			_delay_ms(10);
-			
-			// 2 step
-			PORTD = 0x90;
-  c0:	90 e9       	ldi	r25, 0x90	; 144
-  c2:	92 bb       	out	0x12, r25	; 18
-  c4:	ef ef       	ldi	r30, 0xFF	; 255
-  c6:	f7 e4       	ldi	r31, 0x47	; 71
-  c8:	31 97       	sbiw	r30, 0x01	; 1
-  ca:	f1 f7       	brne	.-4      	; 0xc8 <main+0x2a>
-  cc:	00 c0       	rjmp	.+0      	; 0xce <main+0x30>
-  ce:	00 00       	nop
-			_delay_ms(10);
-			
-			// 3 step
-			PORTD = 0xC0;
-  d0:	90 ec       	ldi	r25, 0xC0	; 192
-  d2:	92 bb       	out	0x12, r25	; 18
-  d4:	ef ef       	ldi	r30, 0xFF	; 255
-  d6:	f7 e4       	ldi	r31, 0x47	; 71
-  d8:	31 97       	sbiw	r30, 0x01	; 1
-  da:	f1 f7       	brne	.-4      	; 0xd8 <main+0x3a>
-  dc:	00 c0       	rjmp	.+0      	; 0xde <main+0x40>
-  de:	00 00       	nop
-			_delay_ms(10);
-			
-			// 4 step
-			PORTD = 0x60;
-  e0:	90 e6       	ldi	r25, 0x60	; 96
-  e2:	92 bb       	out	0x12, r25	; 18
-  e4:	ef ef       	ldi	r30, 0xFF	; 255
-  e6:	f7 e4       	ldi	r31, 0x47	; 71
-  e8:	31 97       	sbiw	r30, 0x01	; 1
-  ea:	f1 f7       	brne	.-4      	; 0xe8 <main+0x4a>
-  ec:	00 c0       	rjmp	.+0      	; 0xee <main+0x50>
-  ee:	00 00       	nop
-	PORTB &= ~0x20;
+  b8:	8f ef       	ldi	r24, 0xFF	; 255
+  ba:	97 e4       	ldi	r25, 0x47	; 71
+  bc:	01 97       	sbiw	r24, 0x01	; 1
+  be:	f1 f7       	brne	.-4      	; 0xbc <keyScan+0x1e>
+  c0:	00 c0       	rjmp	.+0      	; 0xc2 <keyScan+0x24>
+  c2:	00 00       	nop
+	_delay_ms(10);
 	
-	while(1)
-	{
-		
-		for(i = 0; i< 12; i++)
-  f0:	8f 5f       	subi	r24, 0xFF	; 255
-  f2:	8c 30       	cpi	r24, 0x0C	; 12
-  f4:	e8 f2       	brcs	.-70     	; 0xb0 <main+0x12>
-  f6:	ff ef       	ldi	r31, 0xFF	; 255
-  f8:	2f e7       	ldi	r18, 0x7F	; 127
-  fa:	86 e1       	ldi	r24, 0x16	; 22
-  fc:	f1 50       	subi	r31, 0x01	; 1
-  fe:	20 40       	sbci	r18, 0x00	; 0
- 100:	80 40       	sbci	r24, 0x00	; 0
- 102:	e1 f7       	brne	.-8      	; 0xfc <main+0x5e>
- 104:	00 c0       	rjmp	.+0      	; 0x106 <main+0x68>
+	PORTA = 0xEF;							// 1110 1111  - 출력
+  c4:	8f ee       	ldi	r24, 0xEF	; 239
+  c6:	8b bb       	out	0x1b, r24	; 27
+	if(PINA == 0xFE) return '4';			// 1111 1110  - 입력받은 결과
+  c8:	89 b3       	in	r24, 0x19	; 25
+  ca:	8e 3f       	cpi	r24, 0xFE	; 254
+  cc:	a9 f1       	breq	.+106    	; 0x138 <keyScan+0x9a>
+	else if(PINA == 0xFD) return '5';		// 1111 1101  - 입력받은 결과
+  ce:	89 b3       	in	r24, 0x19	; 25
+  d0:	8d 3f       	cpi	r24, 0xFD	; 253
+  d2:	a1 f1       	breq	.+104    	; 0x13c <keyScan+0x9e>
+	else if(PINA == 0xFB) return '6';		// 1111 1011  - 입력받은 결과
+  d4:	89 b3       	in	r24, 0x19	; 25
+  d6:	8b 3f       	cpi	r24, 0xFB	; 251
+  d8:	99 f1       	breq	.+102    	; 0x140 <keyScan+0xa2>
+  da:	8f ef       	ldi	r24, 0xFF	; 255
+  dc:	97 e4       	ldi	r25, 0x47	; 71
+  de:	01 97       	sbiw	r24, 0x01	; 1
+  e0:	f1 f7       	brne	.-4      	; 0xde <keyScan+0x40>
+  e2:	00 c0       	rjmp	.+0      	; 0xe4 <keyScan+0x46>
+  e4:	00 00       	nop
+	_delay_ms(10);
+	
+	PORTA = 0xDF;							// 1101 1111  - 출력
+  e6:	8f ed       	ldi	r24, 0xDF	; 223
+  e8:	8b bb       	out	0x1b, r24	; 27
+	if(PINA == 0xFE) return '7';			// 1111 1110  - 입력받은 결과
+  ea:	89 b3       	in	r24, 0x19	; 25
+  ec:	8e 3f       	cpi	r24, 0xFE	; 254
+  ee:	51 f1       	breq	.+84     	; 0x144 <keyScan+0xa6>
+	else if(PINA == 0xFD) return '8';		// 1111 1101  - 입력받은 결과
+  f0:	89 b3       	in	r24, 0x19	; 25
+  f2:	8d 3f       	cpi	r24, 0xFD	; 253
+  f4:	49 f1       	breq	.+82     	; 0x148 <keyScan+0xaa>
+	else if(PINA == 0xFB) return '9';		// 1111 1011  - 입력받은 결과
+  f6:	89 b3       	in	r24, 0x19	; 25
+  f8:	8b 3f       	cpi	r24, 0xFB	; 251
+  fa:	41 f1       	breq	.+80     	; 0x14c <keyScan+0xae>
+  fc:	8f ef       	ldi	r24, 0xFF	; 255
+  fe:	97 e4       	ldi	r25, 0x47	; 71
+ 100:	01 97       	sbiw	r24, 0x01	; 1
+ 102:	f1 f7       	brne	.-4      	; 0x100 <keyScan+0x62>
+ 104:	00 c0       	rjmp	.+0      	; 0x106 <keyScan+0x68>
  106:	00 00       	nop
- 108:	d1 cf       	rjmp	.-94     	; 0xac <main+0xe>
+	_delay_ms(10);
+	
+	PORTA = 0xBF;							// 1011 1111  - 출력
+ 108:	8f eb       	ldi	r24, 0xBF	; 191
+ 10a:	8b bb       	out	0x1b, r24	; 27
+	if(PINA == 0xFE) return '*';			// 1111 1110  - 입력받은 결과
+ 10c:	89 b3       	in	r24, 0x19	; 25
+ 10e:	8e 3f       	cpi	r24, 0xFE	; 254
+ 110:	f9 f0       	breq	.+62     	; 0x150 <keyScan+0xb2>
+	else if(PINA == 0xFD) return '0';		// 1111 1101  - 입력받은 결과
+ 112:	89 b3       	in	r24, 0x19	; 25
+ 114:	8d 3f       	cpi	r24, 0xFD	; 253
+ 116:	f1 f0       	breq	.+60     	; 0x154 <keyScan+0xb6>
+	else if(PINA == 0xFB) return '#';		// 1111 1011  - 입력받은 결과
+ 118:	89 b3       	in	r24, 0x19	; 25
+ 11a:	8b 3f       	cpi	r24, 0xFB	; 251
+ 11c:	e9 f0       	breq	.+58     	; 0x158 <keyScan+0xba>
+ 11e:	8f ef       	ldi	r24, 0xFF	; 255
+ 120:	97 e4       	ldi	r25, 0x47	; 71
+ 122:	01 97       	sbiw	r24, 0x01	; 1
+ 124:	f1 f7       	brne	.-4      	; 0x122 <keyScan+0x84>
+ 126:	00 c0       	rjmp	.+0      	; 0x128 <keyScan+0x8a>
+ 128:	00 00       	nop
+	_delay_ms(10);
+ 12a:	08 95       	ret
+}
 
-0000010a <_exit>:
- 10a:	f8 94       	cli
+unsigned char keyScan()
+{
+	PORTA = 0xF7;							// 1111 0111  - 출력
+	if(PINA == 0xFE) return '1';			// 1111 1110  - 입력받은 결과
+ 12c:	81 e3       	ldi	r24, 0x31	; 49
+ 12e:	08 95       	ret
+	else if(PINA == 0xFD) return '2';		// 1111 1101  - 입력받은 결과
+ 130:	82 e3       	ldi	r24, 0x32	; 50
+ 132:	08 95       	ret
+	else if(PINA == 0xFB) return '3';		// 1111 1011  - 입력받은 결과
+ 134:	83 e3       	ldi	r24, 0x33	; 51
+ 136:	08 95       	ret
+	_delay_ms(10);
+	
+	PORTA = 0xEF;							// 1110 1111  - 출력
+	if(PINA == 0xFE) return '4';			// 1111 1110  - 입력받은 결과
+ 138:	84 e3       	ldi	r24, 0x34	; 52
+ 13a:	08 95       	ret
+	else if(PINA == 0xFD) return '5';		// 1111 1101  - 입력받은 결과
+ 13c:	85 e3       	ldi	r24, 0x35	; 53
+ 13e:	08 95       	ret
+	else if(PINA == 0xFB) return '6';		// 1111 1011  - 입력받은 결과
+ 140:	86 e3       	ldi	r24, 0x36	; 54
+ 142:	08 95       	ret
+	_delay_ms(10);
+	
+	PORTA = 0xDF;							// 1101 1111  - 출력
+	if(PINA == 0xFE) return '7';			// 1111 1110  - 입력받은 결과
+ 144:	87 e3       	ldi	r24, 0x37	; 55
+ 146:	08 95       	ret
+	else if(PINA == 0xFD) return '8';		// 1111 1101  - 입력받은 결과
+ 148:	88 e3       	ldi	r24, 0x38	; 56
+ 14a:	08 95       	ret
+	else if(PINA == 0xFB) return '9';		// 1111 1011  - 입력받은 결과
+ 14c:	89 e3       	ldi	r24, 0x39	; 57
+ 14e:	08 95       	ret
+	_delay_ms(10);
+	
+	PORTA = 0xBF;							// 1011 1111  - 출력
+	if(PINA == 0xFE) return '*';			// 1111 1110  - 입력받은 결과
+ 150:	8a e2       	ldi	r24, 0x2A	; 42
+ 152:	08 95       	ret
+	else if(PINA == 0xFD) return '0';		// 1111 1101  - 입력받은 결과
+ 154:	80 e3       	ldi	r24, 0x30	; 48
+ 156:	08 95       	ret
+	else if(PINA == 0xFB) return '#';		// 1111 1011  - 입력받은 결과
+ 158:	83 e2       	ldi	r24, 0x23	; 35
+	_delay_ms(10);
+ 15a:	08 95       	ret
 
-0000010c <__stop_program>:
- 10c:	ff cf       	rjmp	.-2      	; 0x10c <__stop_program>
+0000015c <main>:
+	// pad  : c0   c1   c2   r0   r1   r2   r3   없음
+	
+	// 포트A의 0 ~ 2을 출력(Row), 3 ~ 6을 입력(Colum)으로 설정
+	
+	unsigned char key;
+	DDRA = 0xF8;  // 1111 1000
+ 15c:	88 ef       	ldi	r24, 0xF8	; 248
+ 15e:	8a bb       	out	0x1a, r24	; 26
+	DDRC = 0xFF;
+ 160:	8f ef       	ldi	r24, 0xFF	; 255
+ 162:	84 bb       	out	0x14, r24	; 20
+	// 0을 시그널로서 잡는다.
+	
+	
+	while (1)
+	{
+		key = keyScan();
+ 164:	9c df       	rcall	.-200    	; 0x9e <keyScan>
+		if(key == '1') PORTC = 0x01;
+ 166:	81 33       	cpi	r24, 0x31	; 49
+ 168:	e9 f7       	brne	.-6      	; 0x164 <main+0x8>
+ 16a:	81 e0       	ldi	r24, 0x01	; 1
+ 16c:	85 bb       	out	0x15, r24	; 21
+ 16e:	fa cf       	rjmp	.-12     	; 0x164 <main+0x8>
+
+00000170 <_exit>:
+ 170:	f8 94       	cli
+
+00000172 <__stop_program>:
+ 172:	ff cf       	rjmp	.-2      	; 0x172 <__stop_program>

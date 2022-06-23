@@ -15,9 +15,6 @@
 int main()
 {
 	unsigned char i;
-	
-	
-	
 	 
 	 // MOTOR1_EN 를 출력 포트로 설정
 	DDRB = 0x20;
