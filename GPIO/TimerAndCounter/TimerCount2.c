@@ -5,7 +5,7 @@
  *  Author: PKNU
  */ 
 //타이머로 LED 점멸(2)
-#define F_CPU 7432800UL
+#define F_CPU 7372800UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
 

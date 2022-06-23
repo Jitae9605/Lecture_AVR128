@@ -126,11 +126,12 @@
     <Folder Include="Basic_IO" />
     <Folder Include="LCD" />
     <Folder Include="Interupt" />
+    <Folder Include="StepMotor" />
     <Folder Include="TimerAndCounter" />
     <Folder Include="UART" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TimerAndCounter\TimerCount16bit4.c">
+    <Compile Include="StepMotor\StepMotor2.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
