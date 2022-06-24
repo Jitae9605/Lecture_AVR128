@@ -83,6 +83,7 @@ int main()
 		putch(text[i++]);
 	}
 	i = 0;
+	
 	ICR1 = 7372800 / DoReMi[0];
 	OCR1C =  ICR1 / 1000;
 	while(1)
